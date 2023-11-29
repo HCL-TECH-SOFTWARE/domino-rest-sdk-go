@@ -1,0 +1,203 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+        "title": "HCL Domino REST API basis",
+        "version": "1.1.1",
+        "description": "REST APIs for Domino and more done right. With declarative security and access to Code, Design and Data",
+        "contact": {
+            "name": "HCL America Inc",
+            "url": "https://opensource.hcltechsw.com/Domino-rest-api/",
+            "email": "HeyHCL@pnp-hcl.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "https://www.apache.org/licenses/LICENSE-2.0"
+        }
+    },
+    "servers": [
+        {
+            "url": "/api/v1",
+            "description": "Keep enabled server"
+        }
+    ],
+    "paths": {
+        "/lists": {
+            "summary": "Provides the lists (views/folders) present in a database",
+            "description": "Provides the lists (views/folders) present in a database",
+            "get": {
+                "tags": [
+                    "data"
+                ],
+                "parameters": [
+                    {
+                        "name": "type",
+                        "description": "Allows to specify views, folders, all\nTODO: categorized / calendar distinction?",
+                        "schema": {
+                            "enum": [
+                                "all",
+                                "folders",
+                                "views"
+                            ],
+                            "type": "string"
+                        },
+                        "in": "query"
+                    },
+                    {
+                        "examples": {
+                            "CustomApp": {
+                                "value": "demo"
+                            },
+                            "Directory": {
+                                "value": "dominodirectory"
+                            }
+                        },
+                        "name": "dataSource",
+                        "description": "Scope name",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "name": "columns",
+                        "description": "When set to true, column information gets returned. Use with caution, slows down the API",
+                        "schema": {
+                            "type": "boolean"
+                        },
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ListDesignItem"
+                                    }
+                                },
+                                "examples": {
+                                    "lists": {
+                                        "value": [
+                                            {
+                                                "title": "($All)",
+                                                "isFolder": false,
+                                                "alias": [
+                                                ],
+                                                "unid": "0E35D520A1EBBB5B48258435003E8284"
+                                            },
+                                            {
+                                                "title": "Customers",
+                                                "isFolder": false,
+                                                "alias": [
+                                                ],
+                                                "unid": "86C72C1BF64B6DF04825847100373215"
+                                            }
+                                        ]
+                                    },
+                                    "lists with columns": {
+                                        "value": [
+                                            {
+                                                "title": "($All)",
+                                                "isFolder": false,
+                                                "alias": [
+                                                ],
+                                                "unid": "0E35D520A1EBBB5B48258435003E8284",
+                                                "columns": [
+                                                    {
+                                                        "name": "$0",
+                                                        "title": "#",
+                                                        "position": 0,
+                                                        "sorted": false
+                                                    },
+                                                    {
+                                                        "name": "Form",
+                                                        "title": "Form",
+                                                        "position": 1,
+                                                        "sorted": false
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "title": "Customers",
+                                                "isFolder": false,
+                                                "alias": [
+                                                ],
+                                                "unid": "86C72C1BF64B6DF04825847100373215",
+                                                "columns": [
+                                                    {
+                                                        "name": "Name",
+                                                        "title": "Name",
+                                                        "position": 0,
+                                                        "sorted": false
+                                                    },
+                                                    {
+                                                        "name": "Color",
+                                                        "title": "Color",
+                                                        "position": 1,
+                                                        "sorted": false
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Shows list of views and folders in the database"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500InternalServerError"
+                    },
+                    "501": {
+                        "$ref": "#/components/responses/501NotImplemented"
+                    }
+                },
+                "security": [
+                    {
+                        "jwt": [
+                        ]
+                    }
+                ],
+                "operationId": "fetchViews",
+                "summary": "Provide information on available views/folders",
+                "description": "Uses db.getViews() and filters out excluded views",
+                "x-keep-version": 1
+            },
+            "parameters": [
+                {
+                    "name": "type",
+                    "description": "Allows to specify views, folders, all\nTODO: categorized / calendar distinction?",
+                    "schema": {
+                        "enum": [
+                            "all",
+                            "folders",
+                            "views"
+                        ],
+                        "type": "string"
+                    },
+                    "in": "query"
+                },
+                {
+                    "examples": {
+                        "CustomApp": {
+                            "value": "demo"
+                        },
+                        "Directory": {
+                            "value": "dominodirectory"
+                        }
+                    },
+                    "name": "dataSource",
+                    "description": "Scope name",
+                    "schema": {
+                        "type": "string"
+                    },
+                    "in": "query",
+                    "required": true
+                }
+            ]
+        }
+    }
+}
