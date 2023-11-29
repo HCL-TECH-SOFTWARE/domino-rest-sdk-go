@@ -1,0 +1,23 @@
+# ========================================================================== #
+# Copyright (C) 2023 HCL America Inc.                                        #
+# Apache-2.0 license   https://www.apache.org/licenses/LICENSE-2.0           #
+# ========================================================================== #
+name: Publish GO documentation
+on:
+  workflow_dispatch:
+  release:
+    types: [published]
+jobs:
+  documentation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Generate GoDoc
+        uses: ktr0731/godoc-action@v0.1.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: gh-pages
