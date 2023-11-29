@@ -28,7 +28,3 @@ func getListViewEntry(dataSource string, da t.DominoRestAccess, dc t.DominoRestC
 	}
 
 }
-
-// func getListViewEntry(dataSource string, da t.DominoRestAccess, dc t.DominoRestConnector, listViewName string, options t.GetListViewEntryOptions) {
-
-// }

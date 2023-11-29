@@ -76,14 +76,6 @@ func ToDocJson() map[string]interface{} {
 		json[key] = value
 	}
 
-	// var json t.DocumentJSON
-	// json.Form = baseDominoDoc.Form
-	// json.Fields = make(map[string]interface{})
-
-	// for key, value := range baseDominoDoc.Fields {
-	// 	json.Fields[key] = value
-	// }
-
 	return json
 }
 
