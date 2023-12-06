@@ -9,30 +9,29 @@
 package main
 
 import (
-	sdk "github.com/HCL-TECH-SOFTWARE/domino-rest-sdk-go"
-	"github.com/HCL-TECH-SOFTWARE/domino-rest-sdk-go/keep/logger"
-	t "github.com/HCL-TECH-SOFTWARE/domino-rest-sdk-go/keep/types"
+	"fmt"
+
+	gosdk "github.com/HCL-TECH-SOFTWARE/domino-rest-sdk-go"
 )
 
-// Expects to enable usage of DominoConnector component functions
-// Below example shows the usage of GetOperation and GetUrl from DominoConnector
-func ExampleDominoConnector() {
-	server, err := sdk.DominoServer(Env.BaseURL)
+func main() {
+
+	server, err := gosdk.Server("")
 	if err != nil {
-		logger.Pretty("Some error occured! ", server)
+		fmt.Println(err)
 	}
 
-	connector, err := server.GetDominoConnector("basis")
+	connector, err := server.GetConnector("basis")
 	if err != nil {
-		logger.Pretty("Some error occured! ", err)
+		fmt.Println(err)
 	}
 
 	operation, err := connector.GetOperation("getOdataItem")
 	if err != nil {
-		logger.Pretty("Some error occured! ", err)
+		fmt.Println(err)
 	}
 
-	opts := t.DominoRequestOptions{}
+	opts := new(gosdk.DominoRequestOptions)
 	opts.DataSource = "demo"
 	opts.Params = map[string]string{
 		"unid":    "ABCD1234567890BCABCD1234567890BC",
@@ -42,9 +41,9 @@ func ExampleDominoConnector() {
 
 	url, err := connector.GetUrl(operation, "demo", opts.Params)
 	if err != nil {
-		logger.Error(err.Error())
+		fmt.Println(err)
 	}
 
-	logger.Pretty("Prints operation from GetOperation() ", operation)
-	logger.Pretty("Prints url result from GetUrl() ", url)
+	fmt.Println(url)
+
 }
