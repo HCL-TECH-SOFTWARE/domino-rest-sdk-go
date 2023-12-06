@@ -83,7 +83,6 @@ Here is an example of how to use the four moving parts mentioned above in order 
 ```Go
 import (
 	"fmt"
-	"encoding/json"
 	gosdk "https://github.com/HCL-TECH-SOFTWARE/domino-rest-sdk-go"
 )
 
