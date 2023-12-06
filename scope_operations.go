@@ -14,10 +14,10 @@ import (
 )
 
 type ScopeOperationsMethods struct {
-	GetScope    func(scopeName string) (map[string]interface{}, error)
-	GetScopes   func() (map[string]interface{}, error)
-	DeleteScope func(scopeName string) (map[string]interface{}, error)
-	// CreateUpdateScope func(scope map[string]interface{}, da t.DominoRestAccess, dc t.DominoRestConnector) (map[string]interface{}, error)
+	GetScope          func(scopeName string) (map[string]interface{}, error)
+	GetScopes         func() (map[string]interface{}, error)
+	DeleteScope       func(scopeName string) (map[string]interface{}, error)
+	CreateUpdateScope func(scope map[string]interface{}) (map[string]interface{}, error)
 }
 
 // ScopeOperations creates an instance of operations to make list of available operation
@@ -32,6 +32,7 @@ func (ac *AccessConnectorConfig) ScopeOperations() *ScopeOperationsMethods {
 	scopeOperation.GetScope = ec.getScope
 	scopeOperation.GetScopes = ec.getScopes
 	scopeOperation.DeleteScope = ec.deleteScope
+	scopeOperation.CreateUpdateScope = ec.createUpdateScope
 
 	return scopeOperation
 }
