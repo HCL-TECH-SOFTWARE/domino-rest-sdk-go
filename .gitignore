@@ -1,3 +1,2 @@
 .DS_Store
-env.json
-coverage.out
+pkg/resources/env.json
