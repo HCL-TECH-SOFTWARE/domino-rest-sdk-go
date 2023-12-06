@@ -6,6 +6,8 @@
 // Project : Keep Go SDK
 // Author : Patrick Mark Garcia Mazo
 // Role : Senior Software Engineer
+
+// commons.go contains general and reusable functions, properties and struct information.
 package gosdk
 
 import (
@@ -14,17 +16,22 @@ import (
 	"github.com/HCL-TECH-SOFTWARE/domino-rest-sdk-go/pkg/utils"
 )
 
+// AccessConnectorConfig is a pointer struct that is supplied as required
+// parameters to a session and operations.
 type AccessConnectorConfig struct {
 	AccessMethods    AccessMethods
 	ConnectorMethods ConnectorMethods
 }
 
+// ExecuteConfig is a receiver pointer struct required for initiating execute
+// function request to domino server.
 type ExecuteConfig struct {
 	AccessMethods    AccessMethods
 	ConnectorMethods ConnectorMethods
 }
 
-// ApiLoaderParameters structure is required argument for ApiLoader function.
+// ApiLoaderParameters is a receiver pointer struct required for loading list
+// of available api in domino server.
 type ApiLoaderParameters struct {
 	URL string
 }
