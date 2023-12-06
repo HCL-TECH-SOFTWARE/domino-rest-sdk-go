@@ -7,7 +7,7 @@ Domino REST Go SDK is a package build designed to assist developers in integrati
 ## 📔 Documentation
 
 - [Domino REST API documentation](https://opensource.hcltechsw.com/Domino-rest-api/index.html)
-- [Using Domino REST API Node.js SDK examples](/samples/)
+- [Using Domino REST API Go SDK examples](/examples/)
 
 ## ⬇️ Installation
 
