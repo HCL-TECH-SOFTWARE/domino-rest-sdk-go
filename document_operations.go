@@ -26,7 +26,7 @@ type DocumentOperationsMethods struct {
 	DeleteDocument            func(dataSource string, doc DocumentInfo, mode string) (map[string]interface{}, error)
 	DeleteDocumentByUnid      func(dataSource string, unid string, mode string) (map[string]interface{}, error)
 	BulkGetDocument           func(dataSource string, unids []string, options BulkGetDocumentOptions) (map[string]interface{}, error)
-	GetDocumentByQuery        func(dataSource string, getRequest GetDocumentByQueryRequest, action QueryActions, options GetDocumentByQueryOptions) (map[string]interface{}, error)
+	GetDocumentByQuery        func(dataSource string, getRequest GetDocumentByQueryRequest, action string, options GetDocumentByQueryOptions) (map[string]interface{}, error)
 	BulkCreateDocument        func(dataSource string, docs []DocumentJSON, richTextAs RichTextRepresentation) (map[string]interface{}, error)
 	BulkUpdateDocumentByQuery func(dataSource string, bulkUpdateReq BulkUpdateDocumentsByQueryRequest, richTextAs RichTextRepresentation) (map[string]interface{}, error)
 	BulkDeleteDocumentByQuery func(dataSource string, docs []DocumentInfo, mode string) (map[string]interface{}, error)
@@ -327,7 +327,7 @@ func (ac *AccessConnectorConfig) bulkGetDocument(dataSource string, unids []stri
 }
 
 // getDocumentByQuery queries documents in domino rest with specific actions.
-func (ac *AccessConnectorConfig) getDocumentByQuery(dataSource string, getRequest GetDocumentByQueryRequest, actions QueryActions, options GetDocumentByQueryOptions) (map[string]interface{}, error) {
+func (ac *AccessConnectorConfig) getDocumentByQuery(dataSource string, getRequest GetDocumentByQueryRequest, actions string, options GetDocumentByQueryOptions) (map[string]interface{}, error) {
 
 	if len(strings.Trim(dataSource, "")) == 0 {
 		return nil, errors.New("dataSource must not be empty")

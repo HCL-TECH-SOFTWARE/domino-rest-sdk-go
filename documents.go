@@ -13,6 +13,13 @@ import (
 	"slices"
 )
 
+// QueryActions constants are available methods from domino server to handle request with queries.
+const (
+	EXECUTE = "execute"
+	EXPLAIN = "explain"
+	PARSE   = "parse"
+)
+
 // GetDocumentOptions are optional parameter for retrieving documents
 // to domino rest.
 type GetDocumentOptions struct {
@@ -73,13 +80,6 @@ type GetDocumentByQueryRequest struct {
 	Forms            []string               `json:"forms"`
 	IncludeFormAlias bool                   `json:"includeFormAlias"`
 	MarkRead         bool                   `json:"markRead"`
-}
-
-// QueryActions are available methods from domino server to handle request with queries.
-type QueryActions struct {
-	Execute string `json:"execute" default:"execute"`
-	Explain string `json:"explain" default:"explain"`
-	Parse   string `json:"parse" default:"parse"`
 }
 
 // RichTextRepresentation is a list of type of richtext available in domino rest.
