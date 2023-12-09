@@ -144,7 +144,7 @@ type DocumentMethods struct {
 	GetRevision    func() string
 }
 
-func Document(doc map[string]interface{}) (*DocumentMethods, error) {
+func DominoDocument(doc map[string]interface{}) (*DocumentMethods, error) {
 
 	if doc["Form"] != nil && len(doc["Form"].(string)) == 0 {
 		return nil, errors.New("Document needs form value.")

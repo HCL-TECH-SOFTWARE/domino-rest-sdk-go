@@ -65,7 +65,7 @@ func (ac *AccessConnectorConfig) createDocument(dataSource string, doc DocumentJ
 	body["Form"] = doc.Form
 	body["fields"] = doc.Fields
 
-	docMethods, err := Document(body)
+	docMethods, err := DominoDocument(body)
 	if err != nil {
 		return nil, err
 	}

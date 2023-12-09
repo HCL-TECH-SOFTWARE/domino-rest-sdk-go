@@ -153,7 +153,7 @@ type GetDesignOptions struct {
 	NSFPath string `json:"nsfPath"`
 }
 
-func ListView(doc ListViewBody) (*ListViewBody, error) {
+func DominoListView(doc ListViewBody) (*ListViewBody, error) {
 	listView := new(ListViewBody)
 
 	if len(strings.Trim(doc.Name, "")) == 0 {

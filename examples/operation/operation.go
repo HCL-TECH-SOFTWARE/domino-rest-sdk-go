@@ -59,7 +59,7 @@ func main() {
 	sessionCfg.AccessMethods = access
 	sessionCfg.ConnectorMethods = connector
 
-	session := sessionCfg.UserSession()
+	session := sessionCfg.DominoUserSession()
 
 	getDocumentExample(session)
 

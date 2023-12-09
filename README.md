@@ -55,26 +55,26 @@ import "github.com/HCL-TECH-SOFTWARE/domino-rest-sdk-go"
 
 Domino REST API Go SDK has four moving parts:
 
-- `Access`
-- `Server`
-- `Connector`
-- `Session`
+- `DominoAccess`
+- `DominoServer`
+- `DominoConnector`
+- `DominoSession`
 
-### ℹ️ Access
+### ℹ️ DominoAccess
 
-`Access` is a function that facilitates your access to the Domino REST API server. It takes in a `baseUrl`, which is your Idp provider, as well as your credentials, such as your `username`, `password`, `scope` and `type` (the authentication type: `basic` or `oauth`).
+`DominoAccess` is a function that facilitates your access to the Domino REST API server. It takes in a `baseUrl`, which is your Idp provider, as well as your credentials, such as your `username`, `password`, `scope` and `type` (the authentication type: `basic` or `oauth`).
 
-### ℹ️ Server
+### ℹ️ DominoServer
 
-`Server` is a function that gets information on what APIs are available on your current server. It takes in a url to your Domino REST API server as a parameter. This class produces a `ConnectorMethods` interface base on your chosen API.
+`DominoServer` is a function that gets information on what APIs are available on your current server. It takes in a url to your Domino REST API server as a parameter. This class produces a `ConnectorMethods` interface base on your chosen API.
 
-### ℹ️ Connector
+### ℹ️ DominoConnector
 
-`Connector` is the function that does the actual communication between the Domino REST API Go SDK and your Domino REST API server.
+`DominoConnector` is the function that does the actual communication between the Domino REST API Go SDK and your Domino REST API server.
 
 ### ℹ️ Session
 
-`UserSession` is a class that contains all the operation you can perform on your Domino REST API server. It includes built-in methods, and a generic request method if you want to execute an operation on your own.
+`DominoUserSession` is a class that contains all the operation you can perform on your Domino REST API server. It includes built-in methods, and a generic request method if you want to execute an operation on your own.
 
 ### 🎮 Running a Domino REST API operation using the SDK
 

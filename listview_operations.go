@@ -24,8 +24,7 @@ type ListViewOperationsMethods struct {
 	CreateUpdateListView  func(dataSource string, listView ListViewBody, designName string, options CreateUpdateDesignOptions) (map[string]interface{}, error)
 }
 
-func (ac *AccessConnectorConfig) ListViewOperations() *ListViewOperationsMethods {
-
+func (ac *AccessConnectorConfig) DominoListViewOperations() *ListViewOperationsMethods {
 	listView := new(ListViewOperationsMethods)
 	listView.GetListViewPivotEntry = ac.getListViewPivotEntry
 	listView.GetListView = ac.getListView
@@ -130,7 +129,7 @@ func (ac *AccessConnectorConfig) createUpdateListView(dataSource string, listVie
 		params[key] = fmt.Sprintf("%v", value)
 	}
 
-	listViewObj, listErr := ListView(listView)
+	listViewObj, listErr := DominoListView(listView)
 	if listErr != nil {
 		return nil, listErr
 	}

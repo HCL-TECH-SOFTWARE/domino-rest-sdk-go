@@ -79,7 +79,7 @@ func getConnector(apiName string) (*ConnectorMethods, error) {
 	cc := new(ConnectorConfig)
 	cc.BaseUrl = serverURL
 	cc.ApiMeta = *apiMeta
-	connector := cc.Connector()
+	connector := cc.DominoConnector()
 
 	return connector, nil
 

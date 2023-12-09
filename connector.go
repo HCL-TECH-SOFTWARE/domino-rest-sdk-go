@@ -82,7 +82,7 @@ type ConnectorMethods struct {
 
 // DominoConnector function provides connector instance and connector methods
 // that can be used externally.
-func (c *ConnectorConfig) Connector() *ConnectorMethods {
+func (c *ConnectorConfig) DominoConnector() *ConnectorMethods {
 
 	config = c
 

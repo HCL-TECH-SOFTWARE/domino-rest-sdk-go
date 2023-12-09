@@ -16,19 +16,22 @@ type SessionConfig struct {
 type SessionMethods struct {
 	DocumentOperationsMethods
 	ScopeOperationsMethods
+	ListViewOperationsMethods
 }
 
-func (s *SessionConfig) UserSession() *SessionMethods {
+func (s *SessionConfig) DominoUserSession() *SessionMethods {
 
 	ac := new(AccessConnectorConfig)
 	ac.AccessMethods = *s.AccessMethods
 	ac.ConnectorMethods = *s.ConnectorMethods
 	docOperations := ac.DocumentOperations()
 	scopeOperations := ac.ScopeOperations()
+	listViewOperations := ac.DominoListViewOperations()
 
 	session := new(SessionMethods)
 	session.DocumentOperationsMethods = *docOperations
 	session.ScopeOperationsMethods = *scopeOperations
+	session.ListViewOperationsMethods = *listViewOperations
 
 	return session
 }
