@@ -51,15 +51,16 @@ type DesignColumnSimple struct {
 	Title                  string
 	Formula                string
 	SeparateMultipleValues bool
-	Sort                   SortType
+	Sort                   string
 	Position               int
 }
 
-type SortType struct {
-	Ascending  string `default:"ascending" json:"ascending"`
-	Descending string `default:"descending" json:"descending"`
-	None       string `default:"none" json:"none"`
-}
+// SortType constants
+const (
+	ASCENDING  = "ascending"
+	DESCENDING = "descending"
+	NONE       = "none"
+)
 
 // ListViewEntryOptions are object property response from domino server.
 // Mode					Document mode to retrieve the documents with. (Every Form can have multiple modes, each can be different from other modes). Also, Current logged-in user must have access for the specified mode.
