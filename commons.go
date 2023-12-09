@@ -23,13 +23,6 @@ type AccessConnectorConfig struct {
 	ConnectorMethods ConnectorMethods
 }
 
-// ExecuteConfig is a receiver pointer struct required for initiating execute
-// function request to domino server.
-type ExecuteConfig struct {
-	AccessMethods    AccessMethods
-	ConnectorMethods ConnectorMethods
-}
-
 // ApiLoaderParameters is a receiver pointer struct required for loading list
 // of available api in domino server.
 type ApiLoaderParameters struct {
@@ -60,14 +53,14 @@ func (a *ApiLoaderParameters) ApiLoader() (map[string]interface{}, error) {
 }
 
 // Execute merges/grooms request parameters and executes api call to domino rest.
-func (ec *ExecuteConfig) Execute(operationId string, options DominoRequestOptions) (map[string]interface{}, error) {
+func (ac *AccessConnectorConfig) Execute(operationId string, options DominoRequestOptions) (map[string]interface{}, error) {
 
 	reqParams := new(DominoRequestParameters)
 	reqParams.OperationID = operationId
 	reqParams.DominoRequestOptions = options
-	reqParams.DominoAccess = ec.AccessMethods
+	reqParams.DominoAccess = ac.AccessMethods
 
-	response, err := ec.ConnectorMethods.Request(reqParams)
+	response, err := ac.ConnectorMethods.Request(reqParams)
 	if err != nil {
 		return nil, err
 	}

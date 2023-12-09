@@ -37,29 +37,25 @@ type DocumentOperationsMethods struct {
 // methods functional.
 func (ac *AccessConnectorConfig) DocumentOperations() *DocumentOperationsMethods {
 
-	ec := new(ExecuteConfig)
-	ec.AccessMethods = ac.AccessMethods
-	ec.ConnectorMethods = ac.ConnectorMethods
-
 	operation := new(DocumentOperationsMethods)
-	operation.CreateDocument = ec.createDocument
-	operation.GetDocument = ec.getDocument
-	operation.UpdateDocument = ec.updateDocument
-	operation.PatchDocument = ec.patchDocument
-	operation.DeleteDocument = ec.deleteDocument
-	operation.DeleteDocumentByUnid = ec.deleteDocumentByUnid
-	operation.BulkGetDocument = ec.bulkGetDocument
-	operation.GetDocumentByQuery = ec.getDocumentByQuery
-	operation.BulkCreateDocument = ec.bulkCreateDocument
-	operation.BulkUpdateDocumentByQuery = ec.bulkUpdateDocumentByQuery
-	operation.BulkDeleteDocumentByQuery = ec.bulkDeleteDocumentsByQuery
-	operation.BulkDeleteDocumentByUnid = ec.bulkDeleteDocumentByUnid
+	operation.CreateDocument = ac.createDocument
+	operation.GetDocument = ac.getDocument
+	operation.UpdateDocument = ac.updateDocument
+	operation.PatchDocument = ac.patchDocument
+	operation.DeleteDocument = ac.deleteDocument
+	operation.DeleteDocumentByUnid = ac.deleteDocumentByUnid
+	operation.BulkGetDocument = ac.bulkGetDocument
+	operation.GetDocumentByQuery = ac.getDocumentByQuery
+	operation.BulkCreateDocument = ac.bulkCreateDocument
+	operation.BulkUpdateDocumentByQuery = ac.bulkUpdateDocumentByQuery
+	operation.BulkDeleteDocumentByQuery = ac.bulkDeleteDocumentsByQuery
+	operation.BulkDeleteDocumentByUnid = ac.bulkDeleteDocumentByUnid
 
 	return operation
 }
 
 // createDocument inserts new document in domino rest.
-func (ec *ExecuteConfig) createDocument(dataSource string, doc DocumentJSON, options CreateDocumentOptions) (map[string]interface{}, error) {
+func (ac *AccessConnectorConfig) createDocument(dataSource string, doc DocumentJSON, options CreateDocumentOptions) (map[string]interface{}, error) {
 
 	if len(strings.Trim(dataSource, "")) == 0 {
 		return nil, errors.New("dataSource must not be empty.")
@@ -90,7 +86,7 @@ func (ec *ExecuteConfig) createDocument(dataSource string, doc DocumentJSON, opt
 	reqOptions.Params = params
 	reqOptions.Body = docMethods.ToDocumentJSON()
 
-	response, err := ec.Execute("createDocument", *reqOptions)
+	response, err := ac.Execute("createDocument", *reqOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -99,7 +95,7 @@ func (ec *ExecuteConfig) createDocument(dataSource string, doc DocumentJSON, opt
 }
 
 // getDocument retrieves specific document in domino rest by unid.
-func (oc *ExecuteConfig) getDocument(dataSource string, unid string, options GetDocumentOptions) (map[string]interface{}, error) {
+func (ac *AccessConnectorConfig) getDocument(dataSource string, unid string, options GetDocumentOptions) (map[string]interface{}, error) {
 
 	if len(strings.Trim(dataSource, "")) == 0 {
 		return nil, errors.New("dataSource must not be empty.")
@@ -129,7 +125,7 @@ func (oc *ExecuteConfig) getDocument(dataSource string, unid string, options Get
 	reqOptions.DataSource = dataSource
 	reqOptions.Params = params
 
-	response, err := oc.Execute("getDocument", *reqOptions)
+	response, err := ac.Execute("getDocument", *reqOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -138,7 +134,7 @@ func (oc *ExecuteConfig) getDocument(dataSource string, unid string, options Get
 }
 
 // updateDocument updates specific document in domino rest.
-func (oc *ExecuteConfig) updateDocument(dataSource string, doc DocumentInfo, options UpdateDocumentOptions) (map[string]interface{}, error) {
+func (ac *AccessConnectorConfig) updateDocument(dataSource string, doc DocumentInfo, options UpdateDocumentOptions) (map[string]interface{}, error) {
 
 	unid := doc.getUNID()
 
@@ -171,7 +167,7 @@ func (oc *ExecuteConfig) updateDocument(dataSource string, doc DocumentInfo, opt
 	reqOptions.Params = params
 	reqOptions.Body = doc.toDocumentJSON()
 
-	response, err := oc.Execute("updateDocument", *reqOptions)
+	response, err := ac.Execute("updateDocument", *reqOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -180,7 +176,7 @@ func (oc *ExecuteConfig) updateDocument(dataSource string, doc DocumentInfo, opt
 }
 
 // patchDocument patches specific field in a document in rest domino.
-func (ec *ExecuteConfig) patchDocument(dataSource string, unid string, doc DocumentJSON, options UpdateDocumentOptions) (map[string]interface{}, error) {
+func (ac *AccessConnectorConfig) patchDocument(dataSource string, unid string, doc DocumentJSON, options UpdateDocumentOptions) (map[string]interface{}, error) {
 
 	if len(strings.Trim(dataSource, "")) == 0 {
 		return nil, errors.New("dataSource must not be empty")
@@ -211,7 +207,7 @@ func (ec *ExecuteConfig) patchDocument(dataSource string, unid string, doc Docum
 	reqOptions.Params = params
 	reqOptions.Body = doc
 
-	response, err := ec.Execute("patchDocument", *reqOptions)
+	response, err := ac.Execute("patchDocument", *reqOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -220,7 +216,7 @@ func (ec *ExecuteConfig) patchDocument(dataSource string, unid string, doc Docum
 }
 
 // deleteDocument deletes specific document in rest domino.
-func (ec *ExecuteConfig) deleteDocument(dataSource string, doc DocumentInfo, mode string) (map[string]interface{}, error) {
+func (ac *AccessConnectorConfig) deleteDocument(dataSource string, doc DocumentInfo, mode string) (map[string]interface{}, error) {
 
 	unid := doc.getUNID()
 
@@ -246,7 +242,7 @@ func (ec *ExecuteConfig) deleteDocument(dataSource string, doc DocumentInfo, mod
 	reqOptions.DataSource = dataSource
 	reqOptions.Params = params
 
-	response, err := ec.Execute("deleteDocument", *reqOptions)
+	response, err := ac.Execute("deleteDocument", *reqOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -255,7 +251,7 @@ func (ec *ExecuteConfig) deleteDocument(dataSource string, doc DocumentInfo, mod
 }
 
 // deleteDocumentByUnid deletes specific document queried using unid.
-func (ec *ExecuteConfig) deleteDocumentByUnid(dataSource string, unid string, mode string) (map[string]interface{}, error) {
+func (ac *AccessConnectorConfig) deleteDocumentByUnid(dataSource string, unid string, mode string) (map[string]interface{}, error) {
 
 	if len(strings.Trim(dataSource, "")) == 0 {
 		return nil, errors.New("dataSource must not be empty")
@@ -279,7 +275,7 @@ func (ec *ExecuteConfig) deleteDocumentByUnid(dataSource string, unid string, mo
 	reqOptions.DataSource = dataSource
 	reqOptions.Params = params
 
-	response, err := ec.Execute("deleteDocument", *reqOptions)
+	response, err := ac.Execute("deleteDocument", *reqOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -288,7 +284,7 @@ func (ec *ExecuteConfig) deleteDocumentByUnid(dataSource string, unid string, mo
 }
 
 // bulkGetDocument gets list of documents by unids.
-func (ec *ExecuteConfig) bulkGetDocument(dataSource string, unids []string, options BulkGetDocumentOptions) (map[string]interface{}, error) {
+func (ac *AccessConnectorConfig) bulkGetDocument(dataSource string, unids []string, options BulkGetDocumentOptions) (map[string]interface{}, error) {
 
 	if len(strings.Trim(dataSource, "")) == 0 {
 		return nil, errors.New("dataSource must not be empty")
@@ -322,7 +318,7 @@ func (ec *ExecuteConfig) bulkGetDocument(dataSource string, unids []string, opti
 	reqOptions.Params = params
 	reqOptions.Body = unids
 
-	response, err := ec.Execute("bulkGetDocumentsByUnid", *reqOptions)
+	response, err := ac.Execute("bulkGetDocumentsByUnid", *reqOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -331,7 +327,7 @@ func (ec *ExecuteConfig) bulkGetDocument(dataSource string, unids []string, opti
 }
 
 // getDocumentByQuery queries documents in domino rest with specific actions.
-func (ec *ExecuteConfig) getDocumentByQuery(dataSource string, getRequest GetDocumentByQueryRequest, actions QueryActions, options GetDocumentByQueryOptions) (map[string]interface{}, error) {
+func (ac *AccessConnectorConfig) getDocumentByQuery(dataSource string, getRequest GetDocumentByQueryRequest, actions QueryActions, options GetDocumentByQueryOptions) (map[string]interface{}, error) {
 
 	if len(strings.Trim(dataSource, "")) == 0 {
 		return nil, errors.New("dataSource must not be empty")
@@ -356,7 +352,7 @@ func (ec *ExecuteConfig) getDocumentByQuery(dataSource string, getRequest GetDoc
 	reqOptions.Params = params
 	reqOptions.Body = getRequest
 
-	response, err := ec.Execute("query", *reqOptions)
+	response, err := ac.Execute("query", *reqOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -365,7 +361,7 @@ func (ec *ExecuteConfig) getDocumentByQuery(dataSource string, getRequest GetDoc
 }
 
 // bulkCreateDocument inserts multiple documents in domino rest.
-func (ec *ExecuteConfig) bulkCreateDocument(dataSource string, docs []DocumentJSON, richTextAs RichTextRepresentation) (map[string]interface{}, error) {
+func (ac *AccessConnectorConfig) bulkCreateDocument(dataSource string, docs []DocumentJSON, richTextAs RichTextRepresentation) (map[string]interface{}, error) {
 
 	if len(strings.Trim(dataSource, "")) == 0 {
 		return nil, errors.New("dataSource must not be empty")
@@ -396,7 +392,7 @@ func (ec *ExecuteConfig) bulkCreateDocument(dataSource string, docs []DocumentJS
 		"documents": docList,
 	}
 
-	response, err := ec.Execute("bulkCreateDocuments", *reqOptions)
+	response, err := ac.Execute("bulkCreateDocuments", *reqOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -405,7 +401,7 @@ func (ec *ExecuteConfig) bulkCreateDocument(dataSource string, docs []DocumentJS
 }
 
 // bulkUpdateDocumentByQuery update multiple documents based on query.
-func (ec *ExecuteConfig) bulkUpdateDocumentByQuery(dataSource string, bulkUpdateReq BulkUpdateDocumentsByQueryRequest, richTextAs RichTextRepresentation) (map[string]interface{}, error) {
+func (ac *AccessConnectorConfig) bulkUpdateDocumentByQuery(dataSource string, bulkUpdateReq BulkUpdateDocumentsByQueryRequest, richTextAs RichTextRepresentation) (map[string]interface{}, error) {
 
 	if len(strings.Trim(dataSource, "")) == 0 {
 		return nil, errors.New("dataSource must not be empty")
@@ -430,7 +426,7 @@ func (ec *ExecuteConfig) bulkUpdateDocumentByQuery(dataSource string, bulkUpdate
 	reqOptions.Params = params
 	reqOptions.Body = bulkUpdateReq
 
-	response, err := ec.Execute("bulkUpdateDocumentByQuery", *reqOptions)
+	response, err := ac.Execute("bulkUpdateDocumentByQuery", *reqOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -439,7 +435,7 @@ func (ec *ExecuteConfig) bulkUpdateDocumentByQuery(dataSource string, bulkUpdate
 }
 
 // bulkDeleteDocumentsByQuery deletes multiple documents based on query.
-func (ec *ExecuteConfig) bulkDeleteDocumentsByQuery(dataSource string, docs []DocumentInfo, mode string) (map[string]interface{}, error) {
+func (ac *AccessConnectorConfig) bulkDeleteDocumentsByQuery(dataSource string, docs []DocumentInfo, mode string) (map[string]interface{}, error) {
 
 	if len(strings.Trim(dataSource, "")) == 0 {
 		return nil, errors.New("dataSource must not be empty")
@@ -481,7 +477,7 @@ func (ec *ExecuteConfig) bulkDeleteDocumentsByQuery(dataSource string, docs []Do
 	reqOptions.Params = make(map[string]string)
 	reqOptions.Body = body
 
-	response, err := ec.Execute("bulkDeleteDocuments", *reqOptions)
+	response, err := ac.Execute("bulkDeleteDocuments", *reqOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -490,7 +486,7 @@ func (ec *ExecuteConfig) bulkDeleteDocumentsByQuery(dataSource string, docs []Do
 }
 
 // bulkDeleteDocumentByUnid deletes multiple documents based on unid list.
-func (ec *ExecuteConfig) bulkDeleteDocumentByUnid(dataSource string, unids []string, mode string) (map[string]interface{}, error) {
+func (ac *AccessConnectorConfig) bulkDeleteDocumentByUnid(dataSource string, unids []string, mode string) (map[string]interface{}, error) {
 
 	if len(strings.Trim(dataSource, "")) == 0 {
 		return nil, errors.New("dataSource must not be empty")
@@ -524,7 +520,7 @@ func (ec *ExecuteConfig) bulkDeleteDocumentByUnid(dataSource string, unids []str
 	reqOptions.Params = make(map[string]string)
 	reqOptions.Body = body
 
-	response, err := ec.Execute("bulkDeleteDocuments", *reqOptions)
+	response, err := ac.Execute("bulkDeleteDocuments", *reqOptions)
 	if err != nil {
 		return nil, err
 	}

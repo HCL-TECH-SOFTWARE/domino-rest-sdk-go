@@ -24,21 +24,17 @@ type ScopeOperationsMethods struct {
 // methods functional.
 func (ac *AccessConnectorConfig) ScopeOperations() *ScopeOperationsMethods {
 
-	ec := new(ExecuteConfig)
-	ec.AccessMethods = ac.AccessMethods
-	ec.ConnectorMethods = ac.ConnectorMethods
-
 	scopeOperation := new(ScopeOperationsMethods)
-	scopeOperation.GetScope = ec.getScope
-	scopeOperation.GetScopes = ec.getScopes
-	scopeOperation.DeleteScope = ec.deleteScope
-	scopeOperation.CreateUpdateScope = ec.createUpdateScope
+	scopeOperation.GetScope = ac.getScope
+	scopeOperation.GetScopes = ac.getScopes
+	scopeOperation.DeleteScope = ac.deleteScope
+	scopeOperation.CreateUpdateScope = ac.createUpdateScope
 
 	return scopeOperation
 }
 
 // getScope retrieves scope from domino rest by specifying scopeName
-func (ec *ExecuteConfig) getScope(scopeName string) (map[string]interface{}, error) {
+func (ec *AccessConnectorConfig) getScope(scopeName string) (map[string]interface{}, error) {
 
 	if len(strings.Trim(scopeName, "")) == 0 {
 		return nil, errors.New("scopeName must not be empty.")
@@ -59,7 +55,7 @@ func (ec *ExecuteConfig) getScope(scopeName string) (map[string]interface{}, err
 }
 
 // getScopes retrieves list of scopes from domino rest.
-func (ec *ExecuteConfig) getScopes() (map[string]interface{}, error) {
+func (ec *AccessConnectorConfig) getScopes() (map[string]interface{}, error) {
 
 	params := make(map[string]string)
 
@@ -75,7 +71,7 @@ func (ec *ExecuteConfig) getScopes() (map[string]interface{}, error) {
 }
 
 // deleteScope delete scopes in domino rest using scopeName
-func (ec *ExecuteConfig) deleteScope(scopeName string) (map[string]interface{}, error) {
+func (ec *AccessConnectorConfig) deleteScope(scopeName string) (map[string]interface{}, error) {
 
 	if len(strings.Trim(scopeName, "")) == 0 {
 		return nil, errors.New("scopeName must not be empty")
@@ -94,7 +90,7 @@ func (ec *ExecuteConfig) deleteScope(scopeName string) (map[string]interface{}, 
 }
 
 // createUpdateScope updates or insert scope if not exist.
-func (ec *ExecuteConfig) createUpdateScope(scope map[string]interface{}) (map[string]interface{}, error) {
+func (ec *AccessConnectorConfig) createUpdateScope(scope map[string]interface{}) (map[string]interface{}, error) {
 
 	params := make(map[string]string)
 
