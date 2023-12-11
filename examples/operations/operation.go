@@ -65,7 +65,3 @@ func main() {
 	docsCrud.GetDocumentSample(session)
 
 }
-
-func updateDocumentExample(session *gosdk.SessionMethods) {
-
-}
