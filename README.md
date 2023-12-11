@@ -78,7 +78,7 @@ Domino REST API Go SDK has four moving parts:
 
 ### 🎮 Running a Domino REST API operation using the SDK
 
-Here is an example of how to use the four moving parts mentioned above in order to execute one Domino REST API Node SDK.
+Here is an example of how to use the four moving parts mentioned above in order to execute one Domino REST API Go SDK.
 
 ```Go
 import (
