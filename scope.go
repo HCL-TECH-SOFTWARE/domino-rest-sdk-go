@@ -32,18 +32,18 @@ type ScopeInfo struct {
 	Revisions          string       `json:"$Revisions"`
 }
 
-func Scope(doc map[string]interface{}) error {
+func DominoScope(doc map[string]interface{}) (*ScopeInfo, error) {
 
 	if doc["apiName"] != nil && len(strings.Trim(doc["apiName"].(string), "")) == 0 {
-		return errors.New("Domino scope needs apiName value.")
+		return nil, errors.New("Domino scope needs apiName value.")
 	}
 
 	if doc["schemaName"] != nil && len(strings.Trim(doc["schemaName"].(string), "")) == 0 {
-		return errors.New("Domino scope needs schemaName value.")
+		return nil, errors.New("Domino scope needs schemaName value.")
 	}
 
 	if doc["nsfPath"] != nil && len(strings.Trim(doc["schemaName"].(string), "")) == 0 {
-		return errors.New("Domino scope needs nsfPath value.")
+		return nil, errors.New("Domino scope needs nsfPath value.")
 	}
 
 	scope.ApiName = doc["apiName"].(string)
@@ -61,7 +61,7 @@ func Scope(doc map[string]interface{}) error {
 	scope.UpdatedBy = doc["$UpdatedBy"].([]string)
 	scope.Revisions = doc["$Revisions"].(string)
 
-	return nil
+	return scope, nil
 
 }
 
