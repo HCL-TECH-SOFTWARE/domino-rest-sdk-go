@@ -7,3 +7,5 @@
 // Author : Patrick Mark Garcia Mazo
 // Role : Senior Software Engineer
 package test
+
+func DominoAccessTest()
