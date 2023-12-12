@@ -23,7 +23,7 @@ func TestAccessCredentials(t *testing.T) {
 		expected string
 	}{
 		{
-			title:    "TestCase 1: Should fail if BaseURL is empty.",
+			title:    "FAIL: Missing BaseURL",
 			expected: "URL should not be empty.",
 			input: &gosdk.Config{
 				BaseUrl: "",
@@ -38,10 +38,10 @@ func TestAccessCredentials(t *testing.T) {
 			},
 		},
 		{
-			title:    "TestCase 2: Should fail if config type is empty.",
+			title:    "FAIL: Missing Type",
 			expected: "OAUTH needs appSecret, appId and refreshToken",
 			input: &gosdk.Config{
-				BaseUrl: "https://frascati.projectkeep.io",
+				BaseUrl: "http://localhost:8880",
 				Credentials: gosdk.Credentials{
 					Scope:     "",
 					Type:      "",
@@ -53,7 +53,7 @@ func TestAccessCredentials(t *testing.T) {
 			},
 		},
 		{
-			title:    "TestCase 3: Should fail if type is BASIC and no username",
+			title:    "FAIL: Missing UserName for BASIC AUTH",
 			expected: "BASIC authentication needs username and password.",
 			input: &gosdk.Config{
 				BaseUrl: "https://frascati.projectkeep.io",
@@ -68,7 +68,7 @@ func TestAccessCredentials(t *testing.T) {
 			},
 		},
 		{
-			title:    "TestCase 4: Should fail if type is BASIC and no password",
+			title:    "FAIL: Missing PassWord on BASIC AUTH",
 			expected: "BASIC authentication needs username and password.",
 			input: &gosdk.Config{
 				BaseUrl: "https://frascati.projectkeep.io",
@@ -82,12 +82,76 @@ func TestAccessCredentials(t *testing.T) {
 				},
 			},
 		},
+		{
+			title:    "FAIL: Missing AppID on OAUTH",
+			expected: "OAUTH needs appSecret, appId and refreshToken",
+			input: &gosdk.Config{
+				BaseUrl: "https://frascati.projectkeep.io",
+				Credentials: gosdk.Credentials{
+					Scope:     "$DATA",
+					Type:      "OAUTH",
+					UserName:  "",
+					Password:  "",
+					AppID:     "",
+					AppSecret: "",
+				},
+			},
+		},
+		{
+			title:    "FAIL: Missing AppSecret on OAUTH",
+			expected: "OAUTH needs appSecret, appId and refreshToken",
+			input: &gosdk.Config{
+				BaseUrl: "https://frascati.projectkeep.io",
+				Credentials: gosdk.Credentials{
+					Scope:     "$DATA",
+					Type:      "OAUTH",
+					UserName:  "",
+					Password:  "",
+					AppID:     "random-string",
+					AppSecret: "",
+				},
+			},
+		},
+		{
+			title:    "FAIL: Missing RefreshToken on OAUTH",
+			expected: "OAUTH needs appSecret, appId and refreshToken",
+			input: &gosdk.Config{
+				BaseUrl: "https://frascati.projectkeep.io",
+				Credentials: gosdk.Credentials{
+					Scope:        "$DATA",
+					Type:         "OAUTH",
+					UserName:     "",
+					Password:     "",
+					AppID:        "random-string",
+					AppSecret:    "random-string",
+					RefreshToken: "",
+				},
+			},
+		},
+		{
+			title:    "SUCCESS: Complete credentials for BASIC AUTH",
+			expected: "https://frascati.projectkeep.io",
+			input: &gosdk.Config{
+				BaseUrl: "https://frascati.projectkeep.io",
+				Credentials: gosdk.Credentials{
+					Scope:    "$DATA",
+					Type:     "BASIC",
+					UserName: "username",
+					Password: "password",
+				},
+			},
+		},
 	}
 
 	for _, testCase := range testCases {
 		t.Run(testCase.title, func(t *testing.T) {
-			_, err := testCase.input.DominoAccess()
-			assert.Equal(t, testCase.expected, err.Error(), testCase.title)
+			access, err := testCase.input.DominoAccess()
+			if err != nil {
+				assert.Equal(t, testCase.expected, err.Error())
+			} else {
+				assert.Equal(t, testCase.expected, access.GetBaseUrl())
+				assert.Equal(t, 0, access.GetExpiry())
+			}
 		})
 	}
 
