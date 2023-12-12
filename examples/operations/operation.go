@@ -46,7 +46,7 @@ func main() {
 		fmt.Println(err.Error())
 	}
 
-	server, err := gosdk.Server(access.GetBaseUrl())
+	server, err := gosdk.DominoServer(access.GetBaseUrl())
 	if err != nil {
 		fmt.Println(err.Error())
 	}

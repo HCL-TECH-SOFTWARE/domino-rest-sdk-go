@@ -16,7 +16,7 @@ import (
 
 func main() {
 
-	server, err := gosdk.Server("")
+	server, err := gosdk.DominoServer("")
 	if err != nil {
 		fmt.Println(err)
 	}

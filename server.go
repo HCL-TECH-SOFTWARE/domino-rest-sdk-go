@@ -24,7 +24,7 @@ type ServerMethods struct {
 
 // DominoServer function creates new instace of server.
 // provides connector to domino.
-func Server(baseUrl string) (*ServerMethods, error) {
+func DominoServer(baseUrl string) (*ServerMethods, error) {
 
 	loaderParams := new(ApiLoaderParameters)
 	loaderParams.URL = baseUrl + "/api"
