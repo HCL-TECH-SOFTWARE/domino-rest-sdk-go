@@ -11,6 +11,8 @@ package gosdk
 import (
 	"reflect"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestConfig_DominoAccess(t *testing.T) {
@@ -22,9 +24,88 @@ func TestConfig_DominoAccess(t *testing.T) {
 		name    string
 		fields  fields
 		want    *AccessMethods
-		wantErr bool
+		wantErr string
 	}{
-		// TODO: Add test cases.
+		{
+			name: "FAIL: Missing BaseURL",
+			fields: fields{
+				BaseUrl: "",
+			},
+			wantErr: "URL should not be empty.",
+		},
+		{
+			name: "FAIL: Missing Type",
+			fields: fields{
+				BaseUrl: "https://localhost:8880",
+			},
+			wantErr: "OAUTH needs appSecret, appId and refreshToken",
+		},
+		{
+			name: "FAIL: Missing UserName for BASIC AUTH",
+			fields: fields{
+				BaseUrl: "https://localhost:8880",
+				Credentials: Credentials{
+					Type: "BASIC",
+				},
+			},
+			wantErr: "BASIC authentication needs username and password.",
+		},
+		{
+			name: "FAIL: Missing PassWord for BASIC AUTH",
+			fields: fields{
+				BaseUrl: "https://localhost:8880",
+				Credentials: Credentials{
+					Type:     "BASIC",
+					UserName: "username",
+				},
+			},
+			wantErr: "BASIC authentication needs username and password.",
+		},
+		{
+			name: "FAIL: Missing AppId for OAUTH",
+			fields: fields{
+				BaseUrl: "https://localhost:8880",
+				Credentials: Credentials{
+					Type: "OAUTH",
+				},
+			},
+			wantErr: "OAUTH needs appSecret, appId and refreshToken",
+		},
+		{
+			name: "FAIL: Missing AppSecret for OAUTH",
+			fields: fields{
+				BaseUrl: "https://localhost:8880",
+				Credentials: Credentials{
+					Type:  "OAUTH",
+					AppID: "random-string",
+				},
+			},
+			wantErr: "OAUTH needs appSecret, appId and refreshToken",
+		},
+		{
+			name: "FAIL: Missing refreshToken for OAUTH",
+			fields: fields{
+				BaseUrl: "https://localhost:8880",
+				Credentials: Credentials{
+					Type:      "OAUTH",
+					AppID:     "random-string",
+					AppSecret: "random-string",
+				},
+			},
+			wantErr: "OAUTH needs appSecret, appId and refreshToken",
+		},
+		{
+			name: "SUCCESS: Complete credentials for BASIC auth",
+			fields: fields{
+				BaseUrl: "https://localhost:8880",
+				Credentials: Credentials{
+					Scope:    "$DATA",
+					Type:     "BASIC",
+					UserName: "username",
+					Password: "password",
+				},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -33,11 +114,12 @@ func TestConfig_DominoAccess(t *testing.T) {
 				Credentials: tt.fields.Credentials,
 			}
 			got, err := c.DominoAccess()
-			if (err != nil) != tt.wantErr {
-				t.Errorf("Config.DominoAccess() error = %v, wantErr %v", err, tt.wantErr)
+			if err != nil {
+				assert.Equal(t, tt.wantErr, err.Error())
 				return
 			}
-			if !reflect.DeepEqual(got, tt.want) {
+
+			if !reflect.DeepEqual(got.GetBaseUrl(), tt.fields.BaseUrl) {
 				t.Errorf("Config.DominoAccess() = %v, want %v", got, tt.want)
 			}
 		})

@@ -198,7 +198,7 @@ func (dro *DominoRestOperation) getUrl(scope string, params map[string]string) (
 				isRequired = dro.Params[paramIndex].(map[string]interface{})["required"].(bool)
 			}
 
-			if in != "header" || in != "cookie" {
+			if in != "header" && in != "cookie" {
 				err := checkMandatory(isRequired, params, pname, scope)
 				if err != nil {
 					return "", err
