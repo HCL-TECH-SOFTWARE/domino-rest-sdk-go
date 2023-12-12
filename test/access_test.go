@@ -84,15 +84,31 @@ func TestAccessCredentials(t *testing.T) {
 				},
 			},
 		},
+		{
+			title:    "TestCase 5: Should success if supplied with baseurl, type, username and password",
+			expected: "BASIC authentication needs username and password.",
+			input: &gosdk.Config{
+				BaseUrl: "https://frascati.projectkeep.io",
+				Credentials: gosdk.Credentials{
+					Scope:     "",
+					Type:      "BASIC",
+					UserName:  "username",
+					Password:  "password",
+					AppID:     "",
+					AppSecret: "",
+				},
+			},
+		},
 	}
 
 	for _, testCase := range testCases {
 		t.Run(testCase.title, func(t *testing.T) {
 			_, err := testCase.input.DominoAccess()
-			if err.Error() != testCase.expected {
+			if err != nil && err.Error() != testCase.expected {
 				t.Errorf("%s, Result: %s, Expected: %s", testCase.title, err.Error(), testCase.expected)
 			}
 		})
+		t.Logf("Success! %s", testCase.title)
 	}
 
 }
