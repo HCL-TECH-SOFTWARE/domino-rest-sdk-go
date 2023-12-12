@@ -136,7 +136,20 @@ func TestConfig_getExpiry(t *testing.T) {
 		fields fields
 		want   int
 	}{
-		// TODO: Add test cases.
+		{
+			name: "SUCCESS: Get expiry with invalid credentials",
+			fields: fields{
+				BaseUrl: "https://localhost:8880",
+				Credentials: Credentials{
+					Scope:      "$DATA",
+					Type:       "BASIC",
+					UserName:   "username",
+					Password:   "password",
+					ExpiryTime: 0,
+				},
+			},
+			want: 0,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -144,9 +157,7 @@ func TestConfig_getExpiry(t *testing.T) {
 				BaseUrl:     tt.fields.BaseUrl,
 				Credentials: tt.fields.Credentials,
 			}
-			if got := c.getExpiry(); got != tt.want {
-				t.Errorf("Config.getExpiry() = %v, want %v", got, tt.want)
-			}
+			assert.Equal(t, tt.want, c.getExpiry())
 		})
 	}
 }
@@ -192,7 +203,19 @@ func TestConfig_getBaseUrl(t *testing.T) {
 		fields fields
 		want   string
 	}{
-		// TODO: Add test cases.
+		{
+			name: "SUCCESS: Get url with supplied config",
+			fields: fields{
+				BaseUrl: "https://localhost:8880",
+				Credentials: Credentials{
+					Scope:    "$DATA",
+					Type:     "BASIC",
+					UserName: "username",
+					Password: "password",
+				},
+			},
+			want: "https://localhost:8880",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -200,9 +223,7 @@ func TestConfig_getBaseUrl(t *testing.T) {
 				BaseUrl:     tt.fields.BaseUrl,
 				Credentials: tt.fields.Credentials,
 			}
-			if got := c.getBaseUrl(); got != tt.want {
-				t.Errorf("Config.getBaseUrl() = %v, want %v", got, tt.want)
-			}
+			assert.Equal(t, tt.want, c.getBaseUrl())
 		})
 	}
 }
