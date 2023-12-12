@@ -33,9 +33,38 @@ func (ac *AccessConnectorConfig) DominoListViewOperations() *ListViewOperationsM
 	return listView
 }
 
-func (ac *AccessConnectorConfig) getListViewEntry(dataSource string, listViewName string, options GetListViewEntryOptions) (map[string]interface{}, error) {
+func (ac *AccessConnectorConfig) getListViewEntry(dataSource string, listViewName string, options map[string]interface{}) (map[string]interface{}, error) {
 
-	return nil, nil
+	if len(strings.Trim(dataSource, "")) == 0 {
+		return nil, errors.New("dataSource must not be empty.")
+	}
+
+	if len(strings.Trim(listViewName, "")) == 0 {
+		return nil, errors.New("name must not be empty.")
+	}
+
+	var subscriber interface{}
+	params := make(map[string]string)
+	params["name"] = listViewName
+
+	for key, _ := range options {
+		if key == "subscriber" {
+			subscriber = options[key]
+		}
+		params[key] = fmt.Sprintf("%v", options[key])
+	}
+
+	reqOptions := new(DominoRequestOptions)
+	reqOptions.DataSource = dataSource
+	reqOptions.Params = params
+	reqOptions.Body = subscriber
+
+	response, err := ac.Execute("fetchViewEntries", *reqOptions)
+	if err != nil {
+		return nil, err
+	}
+
+	return response, nil
 }
 
 func (ac *AccessConnectorConfig) getListViewPivotEntry(dataSource string, listViewName string, pivotColumn string, options GetListPivotViewEntryOptions) (map[string]interface{}, error) {
