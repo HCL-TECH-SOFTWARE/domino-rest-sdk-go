@@ -1,3 +1,4 @@
 .DS_Store
 pkg/resources/env.json
 coverage.out
+.testcerts
