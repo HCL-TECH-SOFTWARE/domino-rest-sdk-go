@@ -9,11 +9,83 @@
 package gosdk
 
 import (
+	"crypto/x509"
+	"encoding/json"
+	"encoding/pem"
+	"fmt"
+	"io"
+	"os"
 	"reflect"
 	"testing"
 
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/stretchr/testify/assert"
 )
+
+func getTokenizer(user string) map[string]interface{} {
+
+	file, err := os.Open("./pkg/resources/.testcerts/private.key")
+	if err != nil {
+		panic(err)
+	}
+
+	defer file.Close()
+
+	byteData, err := io.ReadAll(file)
+	if err != nil {
+		panic(err)
+	}
+
+	block, _ := pem.Decode(byteData)
+	key, _ := x509.ParsePKCS1PrivateKey(block.Bytes)
+
+	claims := map[string]interface{}{
+		"sub":   user,
+		"CN":    user,
+		"iss":   "Domino REST API Mocha Tests",
+		"scope": "$DATA",
+		"aud":   "Domino",
+		"exp":   3000,
+	}
+
+	bearer := jwt.New(jwt.SigningMethodRS256)
+	signedKey, err := bearer.SignedString(key)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	result := map[string]interface{}{
+		"bearer":    bearer,
+		"claims":    claims,
+		"signedKey": signedKey,
+	}
+
+	return result
+}
+
+func getCredentials() *Config {
+
+	var config = new(Config)
+
+	file, err := os.Open("./pkg/resources/env.json")
+	if err != nil {
+		panic(err)
+	}
+
+	defer file.Close()
+
+	byteData, err := io.ReadAll(file)
+	if err != nil {
+		panic(err)
+	}
+
+	jsonErr := json.Unmarshal(byteData, &config)
+	if jsonErr != nil {
+		panic(jsonErr)
+	}
+
+	return config
+}
 
 func TestConfig_DominoAccess(t *testing.T) {
 	type fields struct {
@@ -163,6 +235,10 @@ func TestConfig_getExpiry(t *testing.T) {
 }
 
 func TestConfig_getAccessToken(t *testing.T) {
+
+	token := getTokenizer("John Doe")
+	creds := getCredentials()
+
 	type fields struct {
 		BaseUrl     string
 		Credentials Credentials
@@ -173,7 +249,46 @@ func TestConfig_getAccessToken(t *testing.T) {
 		wantToken string
 		wantErr   bool
 	}{
-		// TODO: Add test cases.
+		{
+			name: "SUCCESS: Returns token if exist and not expired.",
+			fields: fields{
+				BaseUrl: creds.BaseUrl,
+				Credentials: Credentials{
+					Scope:      creds.Credentials.Scope,
+					Type:       creds.Credentials.Type,
+					UserName:   creds.Credentials.UserName,
+					Password:   creds.Credentials.Password,
+					Token:      token["signedKey"].(string),
+					ExpiryTime: token["claims"].(map[string]interface{})["exp"].(int),
+				},
+			},
+			wantToken: token["signedKey"].(string),
+		},
+		{
+			name: "SUCCESS: Returns token if no existing token that is valid",
+			fields: fields{
+				BaseUrl: creds.BaseUrl,
+				Credentials: Credentials{
+					Scope:    creds.Credentials.Scope,
+					Type:     creds.Credentials.Type,
+					UserName: creds.Credentials.UserName,
+					Password: creds.Credentials.Password,
+				},
+			},
+		},
+		{
+			name: "SUCCESS: Returns token if no existing token that is valid",
+			fields: fields{
+				BaseUrl: creds.BaseUrl,
+				Credentials: Credentials{
+					Scope:        creds.Credentials.Scope,
+					Type:         OAUTH,
+					AppID:        "sample-id",
+					AppSecret:    "sample-secret",
+					RefreshToken: "sample-refresh-token",
+				},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -182,12 +297,12 @@ func TestConfig_getAccessToken(t *testing.T) {
 				Credentials: tt.fields.Credentials,
 			}
 			gotToken, err := c.getAccessToken()
-			if (err != nil) != tt.wantErr {
-				t.Errorf("Config.getAccessToken() error = %v, wantErr %v", err, tt.wantErr)
-				return
+			if err != nil {
+				t.Error(err)
 			}
-			if gotToken != tt.wantToken {
-				t.Errorf("Config.getAccessToken() = %v, want %v", gotToken, tt.wantToken)
+			if tt.wantToken != "" {
+				assert.Equal(t, gotToken, tt.wantToken)
+				assert.Greater(t, len(gotToken), 0)
 			}
 		})
 	}

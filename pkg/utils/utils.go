@@ -14,14 +14,14 @@ import (
 	"net/http"
 	"reflect"
 	"strings"
-	"time"
 )
 
 // IsExpired utility checks expiration time validity in nanoseconds.
 func IsExpired(expiry int) bool {
-	exp := int64(expiry)
-	now := (time.Now().UnixNano() / int64(time.Millisecond))
-	return exp >= now
+	if expiry == 0 {
+		return true
+	}
+	return false
 }
 
 // RequestParameters structure is required parameters for using Request
