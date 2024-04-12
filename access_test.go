@@ -178,6 +178,27 @@ func TestConfig_DominoAccess(t *testing.T) {
 				},
 			},
 		},
+		{
+			name: "SUCCESS: Complete credentials for TOKEN auth",
+			fields: fields{
+				BaseUrl: "https://localhost:8880",
+				Credentials: Credentials{
+					Type:  "TOKEN",
+					Token: "random-token",
+				},
+			},
+		},
+		{
+			name: "FAIL: Missing refreshToken for OAUTH",
+			fields: fields{
+				BaseUrl: "https://localhost:8880",
+				Credentials: Credentials{
+					Type:  "TOKEN",
+					Token: "",
+				},
+			},
+			wantErr: "TOKEN must not be empty.",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

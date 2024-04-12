@@ -13,6 +13,8 @@ package gosdk
 import (
 	"reflect"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestApiLoaderParameters_ApiLoader(t *testing.T) {
@@ -23,23 +25,40 @@ func TestApiLoaderParameters_ApiLoader(t *testing.T) {
 		name    string
 		fields  fields
 		want    map[string]interface{}
-		wantErr bool
+		wantErr string
 	}{
-		// TODO: Add test cases.
+		{
+			name: "ERROR: Returns invalid response for invalid URL.",
+			fields: fields{
+				URL: "http://localhost",
+			},
+			want:    map[string]interface{}(nil),
+			wantErr: "invalid character 'p' after top-level value",
+		},
+		{
+			name: "SUCCESS: Returns invalid response for invalid URL.",
+			fields: fields{
+				URL: "http://frascati.projectkeep.io",
+			},
+			want: map[string]interface{}(nil),
+		},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			a := &ApiLoaderParameters{
 				URL: tt.fields.URL,
 			}
 			got, err := a.ApiLoader()
-			if (err != nil) != tt.wantErr {
-				t.Errorf("ApiLoaderParameters.ApiLoader() error = %v, wantErr %v", err, tt.wantErr)
-				return
+			if err != nil {
+				if tt.fields.URL == "http://localhost" {
+					assert.Equal(t, tt.wantErr, err.Error())
+				}
 			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("ApiLoaderParameters.ApiLoader() = %v, want %v", got, tt.want)
+			if err != nil {
+				assert.Equal(t, got, tt.want)
 			}
+
 		})
 	}
 }

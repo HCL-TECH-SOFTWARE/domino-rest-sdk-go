@@ -24,6 +24,7 @@ import (
 const (
 	BASIC = "BASIC"
 	OAUTH = "OAUTH"
+	TOKEN = "TOKEN"
 )
 
 // Config structure used as required parameters for getting new access instance
@@ -86,7 +87,15 @@ func (c *Config) DominoAccess() (*AccessMethods, error) {
 		if len(c.Credentials.UserName) == 0 || len(c.Credentials.Password) == 0 {
 			return nil, errors.New("BASIC authentication needs username and password.")
 		}
-	} else {
+	}
+
+	if c.Credentials.Type == TOKEN {
+		if len(c.Credentials.Token) == 0 {
+			return nil, errors.New("TOKEN must not be empty.")
+		}
+	}
+
+	if c.Credentials.Type == OAUTH {
 		if len(c.Credentials.AppSecret) == 0 ||
 			len(c.Credentials.AppID) == 0 ||
 			len(c.Credentials.RefreshToken) == 0 {
@@ -126,6 +135,21 @@ func (c *Config) getAccessToken() (token string, err error) {
 			"username": c.UserName,
 			"password": c.Password,
 			"scope":    c.Scope,
+		}
+
+		jsonData, jsonErr := json.Marshal(credentials)
+		if jsonErr != nil {
+			return "", jsonErr
+		}
+		data = bytes.NewBuffer(jsonData)
+	}
+
+	if c.Type == TOKEN {
+		endpoint = c.BaseUrl + "/api/v1/auth"
+		contentType = "application/json"
+		credentials := map[string]interface{}{
+			"type":  c.Type,
+			"token": c.Token,
 		}
 
 		jsonData, jsonErr := json.Marshal(credentials)
