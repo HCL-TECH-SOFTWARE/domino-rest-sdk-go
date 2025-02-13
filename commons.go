@@ -1,5 +1,5 @@
 /* ========================================================================== *
- * Copyright (C) 2023 HCL America Inc.                                        *
+ * Copyright (C) 2023, 2025 HCL America Inc.                                  *
  * Apache-2.0 license   https://www.apache.org/licenses/LICENSE-2.0           *
  * ========================================================================== */
 
@@ -53,7 +53,7 @@ func (a *ApiLoaderParameters) ApiLoader() (map[string]interface{}, error) {
 }
 
 // Execute merges/grooms request parameters and executes api call to domino rest.
-func (ac *AccessConnectorConfig) Execute(operationId string, options DominoRequestOptions) (map[string]interface{}, error) {
+func (ac *AccessConnectorConfig) Execute(operationId string, options DominoRequestOptions) ([]map[string]interface{}, error) {
 
 	reqParams := new(DominoRequestParameters)
 	reqParams.OperationID = operationId

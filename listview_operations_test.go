@@ -1,5 +1,5 @@
 /* ========================================================================== *
- * Copyright (C) 2023 HCL America Inc.                                        *
+ * Copyright (C) 2023, 2025 HCL America Inc.                                  *
  * Apache-2.0 license   https://www.apache.org/licenses/LICENSE-2.0           *
  * ========================================================================== */
 
@@ -46,7 +46,7 @@ func TestAccessConnectorConfig_getListViewEntry(t *testing.T) {
 	type args struct {
 		dataSource   string
 		listViewName string
-		options      map[string]interface{}
+		options      GetListViewEntryOptions
 	}
 	tests := []struct {
 		name    string

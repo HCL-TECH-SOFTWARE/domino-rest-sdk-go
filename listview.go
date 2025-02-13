@@ -1,5 +1,5 @@
 /* ========================================================================== *
- * Copyright (C) 2023 HCL America Inc.                                        *
+ * Copyright (C) 2023, 2025 HCL America Inc.                                  *
  * Apache-2.0 license   https://www.apache.org/licenses/LICENSE-2.0           *
  * ========================================================================== */
 
@@ -21,12 +21,12 @@ import (
 // Unid			Unique id of the view
 // Noteid		The note ID, which is uniquely identifies this view within a particular database.
 type BaseListView struct {
-	Type     ListType `json:"type,omitempty"`
-	Alias    []string `json:"alias,omitempty"`
-	IsFolder bool     `json:"isFolder,omitempty"`
-	Title    string   `json:"title,omitempty"`
-	Unid     string   `json:"unid,omitempty"`
-	Noteid   string   `json:"noteid,omitempty"`
+	Type     ListType `json:"type"`
+	Alias    []string `json:"alias"`
+	IsFolder bool     `json:"isFolder"`
+	Title    string   `json:"title"`
+	Unid     string   `json:"unid"`
+	Noteid   string   `json:"noteid"`
 }
 
 // ListType - Domino list type options. [folder/views]
@@ -47,12 +47,17 @@ type ListViewBody struct {
 }
 
 type DesignColumnSimple struct {
-	Name                   string
-	Title                  string
-	Formula                string
-	SeparateMultipleValues bool
-	Sort                   string
-	Position               int
+	Name                   string `json:"name"`
+	Title                  string `json:"title"`
+	Formula                string `json:"formula"`
+	SeparateMultipleValues bool   `json:"separateMultipleValues"`
+	Sort                   string `json:"sort"`
+}
+
+type KeyTypeRepresentation struct {
+	NUMBER string `json:"number" default:"number"`
+	TEXT   string `json:"text" default:"text"`
+	TIME   string `json:"time" default:"time"`
 }
 
 // SortType constants
@@ -87,38 +92,42 @@ const (
 // MarkRead				When retrieving documents instead of view entries, mark them as read by the current user after retrieval
 // MarkUnread			When retrieving documents instead of view entries, mark them as unread by the current user after retrieval
 // Start				At which entry should return values start (zero based), default = 0
-type ListViewEntryOptions struct {
-	Mode              string                 `json:"mode,omitempty"`
-	Meta              bool                   `json:"meta,omitempty"`
-	StartsWith        string                 `json:"startsWith,omitempty"`
-	PivotColumn       string                 `json:"pivotColumn,omitempty"`
-	MetaAdditional    bool                   `json:"metaAdditional,omitempty"`
-	Category          []string               `json:"category,omitempty"`
-	Column            string                 `json:"column,omitempty"`
-	DistinctDocuments bool                   `json:"distinctDocuments,omitempty"`
-	FTSearchQuery     string                 `json:"ftSearchQUery,omitempty"`
-	Count             int                    `json:"count,omitempty"`
-	UnreadOnly        bool                   `json:"unreadOnly,omitempty"`
-	KeyAllowPartial   bool                   `json:"keyAllowPartial,omitempty"`
-	Documents         bool                   `json:"documents,omitempty"`
-	Key               []string               `json:"key,omitempty"`
-	Direction         SortShort              `json:"direction,omitempty"`
-	Scope             ViewEntryScopes        `json:"scope,omitempty"`
-	RichTextAs        RichTextRepresentation `json:"richTextAs,omitempty"`
-	MarkRead          bool                   `json:"markRead,omitempty"`
-	MarkUnread        bool                   `json:"markUnread,omitempty"`
-	Start             int                    `json:"start,omitempty"`
-}
-
-// GetListViewEntryOptions duplicate copy of ListViewEntryOptions omitting pivotColumn.
 type GetListViewEntryOptions struct {
-	ListViewEntryOptions
+	Mode              string                 `json:"mode"`
+	Meta              bool                   `json:"meta"`
+	StartsWith        string                 `json:"startsWith"`
+	MetaAdditional    bool                   `json:"metaAdditional"`
+	Category          []string               `json:"category"`
+	Column            string                 `json:"column"`
+	DistinctDocuments bool                   `json:"distinctDocuments"`
+	FTSearchQuery     string                 `json:"ftSearchQUery"`
+	Count             int                    `json:"count"`
+	StartKey          string                 `json:"startKey"`
+	UntilKey          string                 `json:"untilKey"`
+	KeyType           KeyTypeRepresentation  `json:"keyType"`
+	UnreadOnly        bool                   `json:"unreadOnly"`
+	KeyAllowPartial   bool                   `json:"keyAllowPartial"`
+	Documents         bool                   `json:"documents"`
+	Key               []string               `json:"key"`
+	Direction         SortShort              `json:"direction"`
+	Scope             ViewEntryScopes        `json:"scope"`
+	RichTextAs        RichTextRepresentation `json:"richTextAs"`
+	MarkRead          bool                   `json:"markRead"`
+	MarkUnread        bool                   `json:"markUnread"`
+	Start             int                    `json:"start"`
 }
 
 // GetListViewEntryOptions duplicate copy of ListViewEntryOptions selecting the following
 // fields, [mode, startsWith, column, count, direction, key, scope, start]
 type GetListPivotViewEntryOptions struct {
-	ListViewEntryOptions
+	Mode       string          `json:"mode"`
+	StartsWith string          `json:"startsWith"`
+	Column     string          `json:"column"`
+	Count      int             `json:"count"`
+	Key        []string        `json:"key"`
+	Direction  SortShort       `json:"direction"`
+	Scope      ViewEntryScopes `json:"scope"`
+	Start      int             `json:"start"`
 }
 
 // GetListViewOptions options for get /list document operation.
@@ -127,6 +136,7 @@ type GetListPivotViewEntryOptions struct {
 type GetListViewOptions struct {
 	Type    string `json:"type"`
 	Columns bool   `json:"columns"`
+	Filter  string `json:"filter"`
 }
 
 // SortShort pertains with sort type in getting list of objects

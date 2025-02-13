@@ -1,5 +1,5 @@
 /* ========================================================================== *
- * Copyright (C) 2023 HCL America Inc.                                        *
+ * Copyright (C) 2023, 2025 HCL America Inc.                                  *
  * Apache-2.0 license   https://www.apache.org/licenses/LICENSE-2.0           *
  * ========================================================================== */
 
@@ -9,7 +9,9 @@
 package gosdk
 
 import (
+	"encoding/json"
 	"errors"
+	"fmt"
 	"strings"
 )
 
@@ -55,11 +57,28 @@ func DominoScope(doc map[string]interface{}) (*ScopeInfo, error) {
 	scope.IsActive = doc["isActive"].(bool)
 	scope.MaximumAccessLevel = doc["maximumAccessLevel"].(string)
 	scope.Server = doc["server"].(string)
-	scope.Meta = doc["@meta"].(DocumentMeta)
-	scope.Form = doc["Form"].(string)
-	scope.Type = doc["Type"].(string)
-	scope.UpdatedBy = doc["$UpdatedBy"].([]string)
-	scope.Revisions = doc["$Revisions"].(string)
+	if doc["@meta"] != nil {
+		data, err := json.Marshal(doc["@meta"])
+		if err != nil {
+			return nil, fmt.Errorf("failed to marshal doc[\"@meta\"]: %w", err)
+		}
+
+		if err := json.Unmarshal(data, &scope.Meta); err != nil {
+			return nil, fmt.Errorf("failed to unmarshal doc[\"@meta\"] data: %w", err)
+		}
+	}
+	if doc["Form"] != nil {
+		scope.Form = doc["Form"].(string)
+	}
+	if doc["Type"] != nil {
+		scope.Type = doc["Type"].(string)
+	}
+	if doc["$UpdatedBy"] != nil {
+		scope.UpdatedBy = doc["$UpdatedBy"].([]string)
+	}
+	if doc["$Revisions"] != nil {
+		scope.Revisions = doc["$Revisions"].(string)
+	}
 
 	return scope, nil
 

@@ -1,5 +1,5 @@
 /* ========================================================================== *
- * Copyright (C) 2023 HCL America Inc.                                        *
+ * Copyright (C) 2023, 2025 HCL America Inc.                                  *
  * Apache-2.0 license   https://www.apache.org/licenses/LICENSE-2.0           *
  * ========================================================================== */
 
@@ -9,7 +9,9 @@
 package gosdk
 
 import (
+	"encoding/json"
 	"errors"
+	"fmt"
 	"slices"
 )
 
@@ -29,7 +31,6 @@ type GetDocumentOptions struct {
 	MarkRead        bool   `json:"markRead"`
 	MarkUnread      bool   `json:"markUnread"`
 	Mode            string `json:"mode"`
-	ParentUnid      string `json:"parentUnid"`
 }
 
 // CreateDocumentOptions are optional parameter for inserting documents
@@ -120,7 +121,9 @@ type DocumentMeta struct {
 	Unread             bool     `json:"unread"`
 	Editable           bool     `json:"editable"`
 	Revision           string   `json:"revision"`
-	Size               string   `json:"size"`
+	Size               int      `json:"size"`
+	Etag               string   `json:"etag"`
+	TopLevelChildUNIDs []string `json:"toplevelchildunids"`
 }
 
 type DocumentJSON struct {
@@ -144,38 +147,45 @@ type DocumentMethods struct {
 	GetRevision    func() string
 }
 
-func DominoDocument(doc map[string]interface{}) (*DocumentMethods, error) {
+func DominoDocument(doc map[string]interface{}) (*DocumentInfo, error) {
 
 	if doc["Form"] != nil && len(doc["Form"].(string)) == 0 {
-		return nil, errors.New("Document needs form value.")
+		return nil, errors.New("document needs form value")
 	}
 
 	methodInfo := new(DocumentInfo)
+	methodInfo.Fields = make(map[string]interface{})
 	nonFieldKeys := []string{"@meta", "Form", "@warnings"}
-	for key, value := range doc["fields"].(map[string]interface{}) {
+	for key, value := range doc {
 
 		if !slices.Contains(nonFieldKeys, key) {
-			methodInfo.Fields = make(map[string]interface{})
 			methodInfo.Fields[key] = value
 		}
 
 	}
 
 	if doc["@meta"] != nil {
-		methodInfo.Meta = doc["@meta"].(DocumentMeta)
+		data, err := json.Marshal(doc["@meta"])
+		if err != nil {
+			return nil, fmt.Errorf("failed to marshal doc[\"@meta\"]: %w", err)
+		}
+
+		if err := json.Unmarshal(data, &methodInfo.Meta); err != nil {
+			return nil, fmt.Errorf("failed to unmarshal doc[\"@meta\"] data: %w", err)
+		}
 	}
 	if doc["@warnings"] != nil {
-		methodInfo.Warnings = doc["@warnings"].([]string)
+		for _, v := range doc["@warnings"].([]interface{}) {
+			str, ok := v.(string)
+			if !ok {
+				return nil, fmt.Errorf("element %v is not a string", v)
+			}
+			methodInfo.Warnings = append(methodInfo.Warnings, str)
+		}
 	}
 	methodInfo.Form = doc["Form"].(string)
 
-	method := new(DocumentMethods)
-	method.ToDocumentJSON = methodInfo.toDocumentJSON
-	method.GetUNID = methodInfo.getUNID
-	method.SetUNID = methodInfo.setUNID
-	method.GetRevision = methodInfo.getRevision
-
-	return method, nil
+	return methodInfo, nil
 }
 
 func (d *DocumentInfo) toDocumentJSON() map[string]interface{} {

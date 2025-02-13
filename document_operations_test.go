@@ -1,5 +1,5 @@
 /* ========================================================================== *
- * Copyright (C) 2023 HCL America Inc.                                        *
+ * Copyright (C) 2023, 2025 HCL America Inc.                                  *
  * Apache-2.0 license   https://www.apache.org/licenses/LICENSE-2.0           *
  * ========================================================================== */
 
@@ -157,7 +157,7 @@ func TestAccessConnectorConfig_patchDocument(t *testing.T) {
 	type args struct {
 		dataSource string
 		unid       string
-		doc        DocumentJSON
+		doc        DocumentInfo
 		options    UpdateDocumentOptions
 	}
 	tests := []struct {
@@ -175,7 +175,7 @@ func TestAccessConnectorConfig_patchDocument(t *testing.T) {
 				AccessMethods:    tt.fields.AccessMethods,
 				ConnectorMethods: tt.fields.ConnectorMethods,
 			}
-			got, err := ac.patchDocument(tt.args.dataSource, tt.args.unid, tt.args.doc, tt.args.options)
+			got, err := ac.patchDocument(tt.args.dataSource, tt.args.doc, tt.args.options)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("AccessConnectorConfig.patchDocument() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -269,6 +269,7 @@ func TestAccessConnectorConfig_bulkGetDocument(t *testing.T) {
 	type args struct {
 		dataSource string
 		unids      []string
+		mode       string
 		options    BulkGetDocumentOptions
 	}
 	tests := []struct {
@@ -286,7 +287,7 @@ func TestAccessConnectorConfig_bulkGetDocument(t *testing.T) {
 				AccessMethods:    tt.fields.AccessMethods,
 				ConnectorMethods: tt.fields.ConnectorMethods,
 			}
-			got, err := ac.bulkGetDocument(tt.args.dataSource, tt.args.unids, tt.args.options)
+			got, err := ac.bulkGetDocument(tt.args.dataSource, tt.args.unids, tt.args.mode, tt.args.options)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("AccessConnectorConfig.bulkGetDocument() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -410,7 +411,7 @@ func TestAccessConnectorConfig_bulkUpdateDocumentByQuery(t *testing.T) {
 	}
 }
 
-func TestAccessConnectorConfig_bulkDeleteDocumentsByQuery(t *testing.T) {
+func TestAccessConnectorConfig_BulkDeleteDocuments(t *testing.T) {
 	type fields struct {
 		AccessMethods    AccessMethods
 		ConnectorMethods ConnectorMethods
@@ -435,13 +436,13 @@ func TestAccessConnectorConfig_bulkDeleteDocumentsByQuery(t *testing.T) {
 				AccessMethods:    tt.fields.AccessMethods,
 				ConnectorMethods: tt.fields.ConnectorMethods,
 			}
-			got, err := ac.bulkDeleteDocumentsByQuery(tt.args.dataSource, tt.args.docs, tt.args.mode)
+			got, err := ac.BulkDeleteDocuments(tt.args.dataSource, tt.args.docs, tt.args.mode)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("AccessConnectorConfig.bulkDeleteDocumentsByQuery() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("AccessConnectorConfig.bulkDeleteDocuments() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("AccessConnectorConfig.bulkDeleteDocumentsByQuery() = %v, want %v", got, tt.want)
+				t.Errorf("AccessConnectorConfig.bulkDeleteDocuments() = %v, want %v", got, tt.want)
 			}
 		})
 	}

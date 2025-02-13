@@ -1,5 +1,5 @@
 /* ========================================================================== *
- * Copyright (C) 2023 HCL America Inc.                                        *
+ * Copyright (C) 2023, 2025 HCL America Inc.                                  *
  * Apache-2.0 license   https://www.apache.org/licenses/LICENSE-2.0           *
  * ========================================================================== */
 
@@ -9,6 +9,7 @@
 package setup
 
 import (
+	"encoding/json"
 	"fmt"
 
 	gosdk "github.com/HCL-TECH-SOFTWARE/domino-rest-sdk-go"
@@ -16,17 +17,31 @@ import (
 
 func UpdateScopeSample(session *gosdk.SessionMethods) {
 
-	result, err := session.GetScope("customersdb2")
+	scopeName := "customersdb"
+	result, err := session.GetScope(scopeName)
 	if err != nil {
 		fmt.Println(err)
+		return
 	}
-	fmt.Println(result)
+
+	if result["errorId"] != nil {
+		fmt.Println("scope ", scopeName, " not found")
+		return
+	}
 
 	result["description"] = "Updated description!"
 
-	resultScope, errScope := session.CreateUpdateScope(result)
+	resultScope, errScope := session.CreateUpdateScope(result, false)
 	if errScope != nil {
 		fmt.Println(errScope)
+		return
 	}
-	fmt.Println(resultScope)
+
+	prettyJSON, err := json.MarshalIndent(resultScope, "", "  ")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	fmt.Println(string(prettyJSON))
 }

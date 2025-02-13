@@ -1,5 +1,5 @@
 /* ========================================================================== *
- * Copyright (C) 2023 HCL America Inc.                                        *
+ * Copyright (C) 2023, 2025 HCL America Inc.                                  *
  * Apache-2.0 license   https://www.apache.org/licenses/LICENSE-2.0           *
  * ========================================================================== */
 
@@ -9,6 +9,7 @@
 package documentscrud
 
 import (
+	"encoding/json"
 	"fmt"
 
 	gosdk "github.com/HCL-TECH-SOFTWARE/domino-rest-sdk-go"
@@ -31,19 +32,31 @@ func PatchDocumentSample(session *gosdk.SessionMethods) {
 	result, err := session.CreateDocument("customersdb", *formData, *options)
 	if err != nil {
 		fmt.Println(err)
+		return
 	}
 
-	doc := new(gosdk.DocumentJSON)
-	doc.Fields = result
-	unid := result["unid"].(string)
+	doc, err := gosdk.DominoDocument(result)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	doc.Fields["name"] = "Patched name"
+	doc.Fields["category"] = []string{"Patched"}
 
 	patchOptions := new(gosdk.UpdateDocumentOptions)
-	patchOptions.Revision = result["revision"].(string)
+	patchOptions.Revision = result["@meta"].(map[string]interface{})["revision"].(string)
 
-	patchResult, patchErr := session.PatchDocument("customersdb", unid, *doc, *patchOptions)
+	patchResult, patchErr := session.PatchDocument("customersdb", *doc, *patchOptions)
 	if patchErr != nil {
 		fmt.Println(patchErr)
+		return
 	}
 
-	fmt.Println(patchResult)
+	prettyJSON, err := json.MarshalIndent(patchResult, "", "  ")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	fmt.Println(string(prettyJSON))
 }

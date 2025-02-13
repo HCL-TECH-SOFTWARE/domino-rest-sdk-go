@@ -1,5 +1,5 @@
 /* ========================================================================== *
- * Copyright (C) 2023 HCL America Inc.                                        *
+ * Copyright (C) 2023, 2025 HCL America Inc.                                  *
  * Apache-2.0 license   https://www.apache.org/licenses/LICENSE-2.0           *
  * ========================================================================== */
 
@@ -9,6 +9,7 @@
 package documentscrud
 
 import (
+	"encoding/json"
 	"fmt"
 
 	gosdk "github.com/HCL-TECH-SOFTWARE/domino-rest-sdk-go"
@@ -31,15 +32,26 @@ func DeleteDocumentSample(session *gosdk.SessionMethods) {
 	result, err := session.CreateDocument("customersdb", *formData, *options)
 	if err != nil {
 		fmt.Println(err)
+		return
 	}
 
-	doc := new(gosdk.DocumentInfo)
-	doc.Fields = result
+	doc, err := gosdk.DominoDocument(result)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 
 	deleteResult, delErr := session.DeleteDocument("customersdb", *doc, "delete")
-	if err != nil {
+	if delErr != nil {
 		fmt.Println(delErr)
+		return
 	}
 
-	fmt.Println(deleteResult)
+	prettyJSON, err := json.MarshalIndent(deleteResult, "", "  ")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	fmt.Println(string(prettyJSON))
 }
