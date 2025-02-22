@@ -1,5 +1,5 @@
 /* ========================================================================== *
- * Copyright (C) 2023 HCL America Inc.                                        *
+ * Copyright (C) 2023, 2025 HCL America Inc.                                  *
  * Apache-2.0 license   https://www.apache.org/licenses/LICENSE-2.0           *
  * ========================================================================== */
 
@@ -69,6 +69,7 @@ func FetchHttpMethods() []string {
 		http.MethodHead,
 		http.MethodPost,
 		http.MethodPut,
+		http.MethodPatch,
 		http.MethodDelete,
 		http.MethodConnect,
 		http.MethodOptions,
@@ -139,8 +140,16 @@ func StructToMap(in interface{}) (map[string]interface{}, error) {
 	// Specify the tagName value as the key in the map; the field value as the value in the map
 	for i := 0; i < v.NumField(); i++ {
 		field := t.Field(i)
+		fieldVal := v.Field(i)
+
 		if string(field.Tag) != "" {
-			out[strings.Split(field.Tag.Get("json"), ",")[0]] = v.Field(i).Interface()
+			if field.Type == reflect.TypeOf(false) {
+				out[strings.Split(field.Tag.Get("json"), ",")[0]] = fieldVal.Bool()
+			} else if fieldVal.IsZero() {
+				continue
+			} else {
+				out[strings.Split(field.Tag.Get("json"), ",")[0]] = fieldVal.Interface()
+			}
 		}
 	}
 	return out, nil

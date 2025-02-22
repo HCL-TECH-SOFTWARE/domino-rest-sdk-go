@@ -1,5 +1,5 @@
 /* ========================================================================== *
- * Copyright (C) 2023 HCL America Inc.                                        *
+ * Copyright (C) 2023, 2025 HCL America Inc.                                  *
  * Apache-2.0 license   https://www.apache.org/licenses/LICENSE-2.0           *
  * ========================================================================== */
 
@@ -9,6 +9,7 @@
 package setup
 
 import (
+	"encoding/json"
 	"fmt"
 
 	gosdk "github.com/HCL-TECH-SOFTWARE/domino-rest-sdk-go"
@@ -33,18 +34,28 @@ func DeleteScopeSample(session *gosdk.SessionMethods) {
 	scp, err := gosdk.DominoScope(scopeData)
 	if err != nil {
 		fmt.Println(err)
+		return
 	}
 
 	data, _ := utils.StructToMap(scp)
 
-	result, errScp := session.CreateUpdateScope(data)
+	result, errScp := session.CreateUpdateScope(data, false)
 	if errScp != nil {
 		fmt.Println(errScp)
+		return
 	}
 
 	deleteResult, delErr := session.DeleteScope(result["apiName"].(string))
 	if delErr != nil {
 		fmt.Println(delErr)
+		return
 	}
-	fmt.Println(deleteResult)
+
+	prettyJSON, err := json.MarshalIndent(deleteResult, "", "  ")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	fmt.Println(string(prettyJSON))
 }

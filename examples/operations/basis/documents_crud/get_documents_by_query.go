@@ -1,5 +1,5 @@
 /* ========================================================================== *
- * Copyright (C) 2023 HCL America Inc.                                        *
+ * Copyright (C) 2023, 2025 HCL America Inc.                                  *
  * Apache-2.0 license   https://www.apache.org/licenses/LICENSE-2.0           *
  * ========================================================================== */
 
@@ -9,6 +9,7 @@
 package documentscrud
 
 import (
+	"encoding/json"
 	"fmt"
 
 	gosdk "github.com/HCL-TECH-SOFTWARE/domino-rest-sdk-go"
@@ -17,15 +18,21 @@ import (
 func GetDocumentsByQuerySample(session *gosdk.SessionMethods) {
 
 	request := new(gosdk.GetDocumentByQueryRequest)
-	request.Count = 1
+	request.Query = "@All"
 
 	options := new(gosdk.GetDocumentByQueryOptions)
-	options.Count = 1
 
 	result, err := session.GetDocumentByQuery("customersdb", *request, gosdk.EXECUTE, *options)
 	if err != nil {
 		fmt.Println(err)
+		return
 	}
-	fmt.Println(result)
 
+	prettyJSON, err := json.MarshalIndent(result, "", "  ")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	fmt.Println(string(prettyJSON))
 }

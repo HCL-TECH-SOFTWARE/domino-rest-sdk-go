@@ -1,5 +1,5 @@
 /* ========================================================================== *
- * Copyright (C) 2023 HCL America Inc.                                        *
+ * Copyright (C) 2023, 2025 HCL America Inc.                                  *
  * Apache-2.0 license   https://www.apache.org/licenses/LICENSE-2.0           *
  * ========================================================================== */
 
@@ -9,6 +9,7 @@
 package documentsbulkcrud
 
 import (
+	"encoding/json"
 	"fmt"
 
 	gosdk "github.com/HCL-TECH-SOFTWARE/domino-rest-sdk-go"
@@ -28,5 +29,12 @@ func BulkUpdateDocumentByQuery(session *gosdk.SessionMethods) {
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Println(result)
+
+	prettyJSON, err := json.MarshalIndent(result, "", "  ")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	fmt.Println(string(prettyJSON))
 }

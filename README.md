@@ -2,7 +2,7 @@
 
 Domino REST Go SDK is a package build designed to assist developers in integrating Domino with their applications.
 
-&copy; 2023 HCL America Inc. Apache-2.0 license [https://www.apache.org/licenses/LICENSE-2.0](https://www.apache.org/licenses/LICENSE-2.0)
+&copy; 2025 HCL America Inc. Apache-2.0 license [https://www.apache.org/licenses/LICENSE-2.0](https://www.apache.org/licenses/LICENSE-2.0)
 
 ## 📔 Documentation
 
@@ -12,7 +12,8 @@ Domino REST Go SDK is a package build designed to assist developers in integrati
 ## ⬇️ Installation
 
 First step is to install and configure Golang. Below is the link to follow the installation and configuration process.
-```
+
+```text
 https://go.dev/doc/install
 ```
 
@@ -39,13 +40,14 @@ https://go.dev/doc/install
 ## 📦 Importing
 
 You can import the whole SDK by:
-```
-// Using golang get command
+
+```shell
 go get github.com/HCL-TECH-SOFTWARE/domino-rest-sdk-go
 ```
 
 You can also import within your Golang file:
-```
+
+```go
 import "github.com/HCL-TECH-SOFTWARE/domino-rest-sdk-go"
 ```
 
@@ -82,8 +84,8 @@ Here is an example of how to use the four moving parts mentioned above in order 
 
 ```Go
 import (
-	"fmt"
-	gosdk "https://github.com/HCL-TECH-SOFTWARE/domino-rest-sdk-go"
+  "fmt"
+  gosdk "https://github.com/HCL-TECH-SOFTWARE/domino-rest-sdk-go"
 )
 
 config := new(gosdk.Config)

@@ -1,5 +1,5 @@
 /* ========================================================================== *
- * Copyright (C) 2023 HCL America Inc.                                        *
+ * Copyright (C) 2023, 2025 HCL America Inc.                                  *
  * Apache-2.0 license   https://www.apache.org/licenses/LICENSE-2.0           *
  * ========================================================================== */
 
@@ -145,7 +145,8 @@ func TestAccessConnectorConfig_createUpdateScope(t *testing.T) {
 		ConnectorMethods ConnectorMethods
 	}
 	type args struct {
-		scope map[string]interface{}
+		scope        map[string]interface{}
+		createSchema bool
 	}
 	tests := []struct {
 		name    string
@@ -162,7 +163,7 @@ func TestAccessConnectorConfig_createUpdateScope(t *testing.T) {
 				AccessMethods:    tt.fields.AccessMethods,
 				ConnectorMethods: tt.fields.ConnectorMethods,
 			}
-			got, err := ec.createUpdateScope(tt.args.scope)
+			got, err := ec.createUpdateScope(tt.args.scope, tt.args.createSchema)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("AccessConnectorConfig.createUpdateScope() error = %v, wantErr %v", err, tt.wantErr)
 				return

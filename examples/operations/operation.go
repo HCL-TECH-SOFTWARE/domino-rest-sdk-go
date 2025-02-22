@@ -1,5 +1,5 @@
 /* ========================================================================== *
- * Copyright (C) 2023 HCL America Inc.                                        *
+ * Copyright (C) 2023, 2025 HCL America Inc.                                  *
  * Apache-2.0 license   https://www.apache.org/licenses/LICENSE-2.0           *
  * ========================================================================== */
 
@@ -15,13 +15,13 @@ import (
 	"os"
 
 	gosdk "github.com/HCL-TECH-SOFTWARE/domino-rest-sdk-go"
-	docsCrud "github.com/HCL-TECH-SOFTWARE/domino-rest-sdk-go/examples/operations/basis/documents_crud"
+	docsCrud "github.com/HCL-TECH-SOFTWARE/domino-rest-sdk-go/examples/operations/setup"
 )
 
 var config = new(gosdk.Config)
 
 func init() {
-	file, err := os.Open("../../pkg/resources/env.json")
+	file, err := os.Open("../pkg/resources/env.json")
 	if err != nil {
 		panic(err)
 	}
@@ -51,7 +51,7 @@ func main() {
 		fmt.Println(err.Error())
 	}
 
-	connector, err := server.GetConnector("basis")
+	connector, err := server.GetConnector("setup")
 	if err != nil {
 		fmt.Println(err.Error())
 	}
@@ -62,6 +62,5 @@ func main() {
 
 	session := sessionCfg.DominoUserSession()
 
-	docsCrud.GetDocumentSample(session)
-
+	docsCrud.UpdateScopeSample(session)
 }

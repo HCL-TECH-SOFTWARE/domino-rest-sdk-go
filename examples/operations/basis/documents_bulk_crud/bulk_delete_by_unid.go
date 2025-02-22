@@ -1,5 +1,5 @@
 /* ========================================================================== *
- * Copyright (C) 2023 HCL America Inc.                                        *
+ * Copyright (C) 2023, 2025 HCL America Inc.                                  *
  * Apache-2.0 license   https://www.apache.org/licenses/LICENSE-2.0           *
  * ========================================================================== */
 
@@ -9,6 +9,7 @@
 package documentsbulkcrud
 
 import (
+	"encoding/json"
 	"fmt"
 
 	gosdk "github.com/HCL-TECH-SOFTWARE/domino-rest-sdk-go"
@@ -39,18 +40,25 @@ func BulkDeleteDocumentByUNID(session *gosdk.SessionMethods) {
 	result, err := session.BulkCreateDocument("customersdb", docList, *richTextAs)
 	if err != nil {
 		fmt.Println(err)
+		return
 	}
 
 	UNIDList := []string{}
-	for key, value := range result {
-		if key == "unid" {
-			UNIDList = append(UNIDList, value.(string))
-		}
+	for _, doc := range result {
+		UNIDList = append(UNIDList, doc["@meta"].(map[string]interface{})["unid"].(string))
 	}
 
 	deleteResult, delErr := session.BulkDeleteDocumentByUnid("customersdb", UNIDList, "delete")
 	if delErr != nil {
 		fmt.Println(delErr)
+		return
 	}
-	fmt.Println(deleteResult)
+
+	prettyJSON, err := json.MarshalIndent(deleteResult, "", "  ")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	fmt.Println(string(prettyJSON))
 }

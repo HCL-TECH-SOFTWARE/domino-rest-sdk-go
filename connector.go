@@ -1,5 +1,5 @@
 /* ========================================================================== *
- * Copyright (C) 2023 HCL America Inc.                                        *
+ * Copyright (C) 2023, 2025 HCL America Inc.                                  *
  * Apache-2.0 license   https://www.apache.org/licenses/LICENSE-2.0           *
  * ========================================================================== */
 
@@ -74,7 +74,7 @@ type FetchOptionsParameters struct {
 // ConnectorMethods structure contains list of connector function that can be
 // used externally.
 type ConnectorMethods struct {
-	Request         func(*DominoRequestParameters) (map[string]interface{}, error)
+	Request         func(*DominoRequestParameters) ([]map[string]interface{}, error)
 	GetUrl          func(dro *DominoRestOperation, scope string, params map[string]string) (string, error)
 	GetOperation    func(operationId string) (*DominoRestOperation, error)
 	GetFetchOptions func(dro *FetchOptionsParameters) (map[string]interface{}, error)
@@ -97,7 +97,7 @@ func (c *ConnectorConfig) DominoConnector() *ConnectorMethods {
 
 // dominoRequest private function that directly request to domino with clean and
 // transformed request data, forms or parameters.
-func (drp *DominoRequestParameters) dominoRequest() (map[string]interface{}, error) {
+func (drp *DominoRequestParameters) dominoRequest() ([]map[string]interface{}, error) {
 
 	var scope string
 	scope = drp.DataSource
@@ -160,13 +160,18 @@ func (drp *DominoRequestParameters) dominoRequest() (map[string]interface{}, err
 		return nil, err
 	}
 
-	result := make(map[string]interface{})
-	err = json.Unmarshal(response, &result)
-	if err != nil {
-		return nil, err
+	var arrResult []map[string]interface{}
+	if err := json.Unmarshal(response, &arrResult); err == nil {
+		return arrResult, nil
 	}
 
-	return result, nil
+	var result map[string]interface{}
+	// result := make(map[string]map[string]interface{})
+	if err := json.Unmarshal(response, &result); err != nil {
+		return nil, fmt.Errorf("Failed to unmarshal JSON: %w", err)
+	}
+
+	return []map[string]interface{}{result}, nil
 }
 
 // getUrl private function that parses required url endpoint to request in domino.
@@ -213,10 +218,9 @@ func (dro *DominoRestOperation) getUrl(scope string, params map[string]string) (
 					var searchFor = fmt.Sprintf("{%s}", pname)
 					rawURL = strings.ReplaceAll(rawURL, searchFor, newValue)
 				} else {
-					// if params[pname] != "" {
-					// 	query.Set(pname, newValue)
-					// }
-					query.Set(pname, newValue)
+					if newValue != "" {
+						query.Set(pname, newValue)
+					}
 				}
 			}
 
