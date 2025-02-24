@@ -3,7 +3,7 @@ module github.com/HCL-TECH-SOFTWARE/domino-rest-sdk-go
 go 1.21.3
 
 require (
-	github.com/golang-jwt/jwt/v5 v5.2.0
+	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/stretchr/testify v1.8.4
 )
 
